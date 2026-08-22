@@ -1,0 +1,39 @@
+[workspace]
+name = "pc2foodnet"
+version = "0.1.0"
+description = "Physics-Constrained, Confidence-Calibrated multi-task Turkish food model"
+channels = ["conda-forge", "pytorch", "nvidia"]
+platforms = ["linux-64"]
+
+[dependencies]
+python = "3.11.*"
+# PyTorch with CUDA 12.4
+pytorch = {version = ">=2.4.0,<2.6", channel = "pytorch"}
+torchvision = {version = ">=0.19.0,<0.21", channel = "pytorch"}
+pytorch-cuda = {version = "12.4.*", channel = "pytorch"}
+# Core scientific stack
+numpy = ">=1.26,<2.0"
+pillow = ">=10.0"
+tqdm = ">=4.66"
+matplotlib = ">=3.8"
+scikit-learn = ">=1.4"
+pandas = ">=2.2"
+seaborn = ">=0.13"
+tensorboard = ">=2.16"
+rich = ">=13.7"
+graphviz = ">=12.2.1,<13"
+python-graphviz = ">=0.21,<0.22"
+
+[pypi-dependencies]
+timm = ">=1.0.3"
+einops = ">=0.7"
+
+[tasks]
+# 4-fold stratified CV (primary workflow)
+train-cv = "python train.py --n_folds 4 --epochs 50 --batch_size 32 --output_dir runs/cv --results_dir results/cv"
+# CV warm-started from a prior full-dataset checkpoint
+train-cv-warmstart = "python train.py --n_folds 5 --epochs 30 --batch_size 32 --output_dir runs/cv_ws --results_dir results/cv_ws --warmstart_from runs/full/best.pt"
+# Dataset sanity check
+dataset-check = "python dataset.py turkish-food"
+# GPU check
+
