@@ -427,24 +427,4 @@ PC2FoodNet-Paper/
 
 If you use this codebase or the Turkish Food benchmark in your research, please cite:
 
-```bibtex
-@article{Jamil2026AIDCare,
-  title   = {{AI}-Assisted Nutrition Estimation and Exercise Support for Integrated Lifestyle Management in Patients with Diabetes},
-  author  = {Jamil, Muhammad and Kavak, Adnan and Fotouhi, Hossein and Rashed, Md. and Gezer, Emre and {\.I}nner, Alpaslan Burak and Srivastava, Gautam and Neovius, Mats and Lind{\'e}n, Maria and {\AA}kerberg, Anna and Olausson, H{\aa}kan},
-  journal = {Nutrients},
-  year    = {2026},
-  publisher = {MDPI},
-  note    = {Under Review}
-}
-
-@inproceedings{ChoiOkos1986,
-  author    = {Choi, Y. and Okos, M. R.},
-  title     = {Effects of Temperature and Composition on the Thermal Properties of Foods},
-  booktitle = {Food Engineering and Process Applications},
-  volume    = {1},
-  pages     = {93--101},
-  year      = {1986},
-  publisher = {Elsevier Applied Science Publishers},
-  address   = {London, UK}
-}
-```
+To be added.
