@@ -1,5 +1,5 @@
 """
-train.py — PC2FoodNet 5-fold stratified cross-validation trainer.
+train.py — PC2FoodNet 4-fold stratified cross-validation trainer.
 
 Data leakage prevention strategy
 ──────────────────────────────────
@@ -15,7 +15,7 @@ Data leakage prevention strategy
 
 Usage
 ──────
-  # 5-fold CV (default)
+  # 4-fold CV (default)
   python train.py --epochs 50 --batch_size 32
 
   # Warm-start every fold from a pretrained checkpoint
@@ -139,7 +139,8 @@ def run_epoch(
         gt_nrg = gt_nrg.to(device, non_blocking=True)
         bs     = imgs.size(0)
 
-        with torch.amp.autocast("cuda"):
+        device_type = "cuda" if device.type == "cuda" else "cpu"
+        with torch.amp.autocast(device_type=device_type, enabled=(device.type == "cuda")):
             out           = model(imgs)
             loss, details = criterion(out, labels, epoch=epoch,
                                       gt_volume=gt_vol, gt_weight=gt_wgt, gt_energy=gt_nrg)
@@ -190,7 +191,7 @@ def make_model(args, densities, kcal_per_g, num_classes, device) -> PC2FoodNet:
         dropout        = args.dropout,
         residual_bound = args.residual_bound,
     ).to(device)
-    m.initialize_regression_biases(250.0, 200.0, 350.0)
+    m.initialize_regression_biases(85.0, 100.0, 250.0)
     return m
 
 
@@ -222,7 +223,7 @@ def train_fold(
     fold_dir.mkdir(parents=True, exist_ok=True)
 
     criterion = PC2Loss()
-    scaler    = torch.amp.GradScaler("cuda")
+    scaler    = torch.amp.GradScaler("cuda", enabled=(device.type == "cuda"))
     optimizer = AdamW(model.parameters(), lr=args.lr,
                       weight_decay=args.weight_decay)
     scheduler = make_scheduler(optimizer, args)
@@ -292,7 +293,7 @@ def train_fold(
 # ────────────────────────────────────────────────────────────────────────────
 
 def parse_args():
-    p = argparse.ArgumentParser("PC2FoodNet 5-fold CV Trainer")
+    p = argparse.ArgumentParser("PC2FoodNet 4-fold CV Trainer")
 
     # Data
     p.add_argument("--data_dir",     default="turkish-food")
@@ -302,7 +303,7 @@ def parse_args():
 
     # CV
     p.add_argument("--n_folds", type=int, default=4,
-                   help="Number of stratified CV folds (80:20 each)")
+                   help="Number of stratified CV folds (75:25 each)")
     p.add_argument("--start_fold",   type=int,   default=1,
                    help="Fold to start from (1-indexed)")
 
@@ -455,8 +456,11 @@ def main():
     mean_loss = np.mean([r["total"] for r in fold_results])
     std_loss  = np.std( [r["total"] for r in fold_results])
 
+    train_pct = int(100 * (args.n_folds - 1) / args.n_folds)
+    val_pct   = int(100 / args.n_folds)
+
     print(f"\n{'═'*65}")
-    print(f"  {args.n_folds}-Fold CV Final Results  (80:20 stratified split)")
+    print(f"  {args.n_folds}-Fold CV Final Results  ({train_pct}:{val_pct} stratified split)")
     print(f"{'═'*65}")
     print(f"  Acc@1  : {mean_acc1:.2f} ± {std_acc1:.2f} %")
     print(f"  Acc@5  : {mean_acc5:.2f} ± {std_acc5:.2f} %")
@@ -467,7 +471,7 @@ def main():
     # Save final summary JSON
     summary = {
         "n_folds": args.n_folds,
-        "split": "stratified 80:20 per fold",
+        "split": f"stratified {train_pct}:{val_pct} per fold",
         "mean_acc1": mean_acc1, "std_acc1": std_acc1,
         "mean_acc5": mean_acc5, "std_acc5": std_acc5,
         "mean_loss": mean_loss, "std_loss": std_loss,

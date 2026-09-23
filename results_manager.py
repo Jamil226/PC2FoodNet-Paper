@@ -179,18 +179,63 @@ class ResultsManager:
         fig.savefig(fold_dir / "curves.png", dpi=150, bbox_inches="tight")
         plt.close(fig)
 
-    def _run_inference(self, model, val_loader, device):
-        """Single inference pass — returns (all_preds, all_labels)."""
+    def _run_inference(self, model, val_loader, device, fold_dir: Optional[Path] = None):
+        """Single inference pass — returns (all_preds, all_labels) and saves val_predictions.npz."""
         model.eval()
         all_preds, all_labels = [], []
+        all_probs = []
+        vol_preds, vol_gts = [], []
+        wgt_preds, wgt_gts = [], []
+        nrg_preds, nrg_gts = [], []
+        vol_logvars, wgt_logvars, nrg_logvars = [], [], []
+
         with torch.no_grad():
             for batch in val_loader:
                 imgs, labels = batch[0], batch[1]
+                gt_v = batch[2] if len(batch) > 2 else torch.zeros_like(labels).float()
+                gt_w = batch[3] if len(batch) > 3 else torch.zeros_like(labels).float()
+                gt_e = batch[4] if len(batch) > 4 else torch.zeros_like(labels).float()
+
                 imgs = imgs.to(device, non_blocking=True)
-                with torch.amp.autocast("cuda"):
+                device_type = "cuda" if device.type == "cuda" else "cpu"
+                with torch.amp.autocast(device_type=device_type, enabled=(device.type == "cuda")):
                     out = model(imgs)
-                all_preds.extend(out["logits"].argmax(1).cpu().tolist())
+
+                preds = out["logits"].argmax(1).cpu().tolist()
+                probs = out["probs"].cpu().numpy()
+                all_preds.extend(preds)
                 all_labels.extend(labels.tolist())
+                all_probs.append(probs)
+
+                vol_preds.extend(out["volume"].cpu().tolist())
+                vol_gts.extend(gt_v.tolist())
+                wgt_preds.extend(out["weight"].cpu().tolist())
+                wgt_gts.extend(gt_w.tolist())
+                nrg_preds.extend(out["energy"].cpu().tolist())
+                nrg_gts.extend(gt_e.tolist())
+
+                vol_logvars.extend(out["logvar_volume"].cpu().tolist())
+                wgt_logvars.extend(out["logvar_weight"].cpu().tolist())
+                nrg_logvars.extend(out["logvar_energy"].cpu().tolist())
+
+        if fold_dir is not None:
+            all_probs_arr = np.concatenate(all_probs, axis=0) if all_probs else np.array([])
+            np.savez_compressed(
+                fold_dir / "val_predictions.npz",
+                preds=np.array(all_preds, dtype=np.int64),
+                labels=np.array(all_labels, dtype=np.int64),
+                probs=all_probs_arr,
+                volume_pred=np.array(vol_preds, dtype=np.float32),
+                volume_gt=np.array(vol_gts, dtype=np.float32),
+                weight_pred=np.array(wgt_preds, dtype=np.float32),
+                weight_gt=np.array(wgt_gts, dtype=np.float32),
+                energy_pred=np.array(nrg_preds, dtype=np.float32),
+                energy_gt=np.array(nrg_gts, dtype=np.float32),
+                logvar_volume=np.array(vol_logvars, dtype=np.float32),
+                logvar_weight=np.array(wgt_logvars, dtype=np.float32),
+                logvar_energy=np.array(nrg_logvars, dtype=np.float32),
+            )
+
         return all_preds, all_labels
 
     def _save_confusion_matrix(
@@ -202,7 +247,7 @@ class ResultsManager:
         device: torch.device,
         fold_dir: Path,
     ) -> None:
-        all_preds, all_labels = self._run_inference(model, val_loader, device)
+        all_preds, all_labels = self._run_inference(model, val_loader, device, fold_dir=fold_dir)
 
         cm = confusion_matrix(all_labels, all_preds,
                               labels=list(range(len(class_names))))

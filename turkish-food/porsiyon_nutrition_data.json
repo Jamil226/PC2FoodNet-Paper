@@ -1,0 +1,362 @@
+[
+  {
+    "yemek": "Adana Kebap",
+    "porsiyon": "100g",
+    "kalori": 280.0,
+    "protein": 18.0,
+    "karbonhidrat": 2.0,
+    "yağ": 22.0,
+    "lif": 0.5
+  },
+  {
+    "yemek": "Aşure",
+    "porsiyon": "100g",
+    "kalori": 175.0,
+    "protein": 3.5,
+    "karbonhidrat": 35.0,
+    "yağ": 2.0,
+    "lif": 3.0
+  },
+  {
+    "yemek": "Baklava",
+    "porsiyon": "100g",
+    "kalori": 450.0,
+    "protein": 6.5,
+    "karbonhidrat": 55.0,
+    "yağ": 24.0,
+    "lif": 2.0
+  },
+  {
+    "yemek": "Beyaz Ekmek",
+    "porsiyon": "100g",
+    "kalori": 260.0,
+    "protein": 8.5,
+    "karbonhidrat": 52.0,
+    "yağ": 1.5,
+    "lif": 2.5
+  },
+  {
+    "yemek": "Bulgur Pilavı",
+    "porsiyon": "100g",
+    "kalori": 150.0,
+    "protein": 3.5,
+    "karbonhidrat": 25.0,
+    "yağ": 4.0,
+    "lif": 2.5
+  },
+  {
+    "yemek": "Börek",
+    "porsiyon": "100g",
+    "kalori": 310.0,
+    "protein": 9.0,
+    "karbonhidrat": 32.0,
+    "yağ": 16.0,
+    "lif": 1.5
+  },
+  {
+    "yemek": "Esmer Ekmek",
+    "porsiyon": "100g",
+    "kalori": 240.0,
+    "protein": 9.0,
+    "karbonhidrat": 45.0,
+    "yağ": 2.0,
+    "lif": 6.0
+  },
+  {
+    "yemek": "Ezogelin Çorbası",
+    "porsiyon": "100g",
+    "kalori": 85.0,
+    "protein": 4.0,
+    "karbonhidrat": 12.0,
+    "yağ": 2.5,
+    "lif": 2.0
+  },
+  {
+    "yemek": "Gözleme",
+    "porsiyon": "100g",
+    "kalori": 290.0,
+    "protein": 8.0,
+    "karbonhidrat": 38.0,
+    "yağ": 12.0,
+    "lif": 2.0
+  },
+  {
+    "yemek": "Hamburger",
+    "porsiyon": "100g",
+    "kalori": 270.0,
+    "protein": 14.0,
+    "karbonhidrat": 24.0,
+    "yağ": 13.0,
+    "lif": 1.5
+  },
+  {
+    "yemek": "Haşlanmış Yumurta",
+    "porsiyon": "100g",
+    "kalori": 155.0,
+    "protein": 12.5,
+    "karbonhidrat": 1.0,
+    "yağ": 10.0,
+    "lif": 0.0
+  },
+  {
+    "yemek": "Kadayıf",
+    "porsiyon": "100g",
+    "kalori": 415.0,
+    "protein": 5.0,
+    "karbonhidrat": 58.0,
+    "yağ": 18.0,
+    "lif": 1.5
+  },
+  {
+    "yemek": "Karnıyarık",
+    "porsiyon": "100g",
+    "kalori": 135.0,
+    "protein": 6.5,
+    "karbonhidrat": 7.0,
+    "yağ": 9.0,
+    "lif": 2.5
+  },
+  {
+    "yemek": "Kumpir",
+    "porsiyon": "100g",
+    "kalori": 180.0,
+    "protein": 4.0,
+    "karbonhidrat": 22.0,
+    "yağ": 8.0,
+    "lif": 2.0
+  },
+  {
+    "yemek": "Kuru Fasulye",
+    "porsiyon": "100g",
+    "kalori": 145.0,
+    "protein": 7.0,
+    "karbonhidrat": 18.0,
+    "yağ": 4.5,
+    "lif": 5.5
+  },
+  {
+    "yemek": "Köfte",
+    "porsiyon": "100g",
+    "kalori": 235.0,
+    "protein": 17.0,
+    "karbonhidrat": 5.0,
+    "yağ": 16.0,
+    "lif": 1.0
+  },
+  {
+    "yemek": "Künefe",
+    "porsiyon": "100g",
+    "kalori": 400.0,
+    "protein": 7.5,
+    "karbonhidrat": 48.0,
+    "yağ": 20.0,
+    "lif": 1.5
+  },
+  {
+    "yemek": "Kısır",
+    "porsiyon": "100g",
+    "kalori": 160.0,
+    "protein": 3.5,
+    "karbonhidrat": 22.0,
+    "yağ": 6.0,
+    "lif": 3.0
+  },
+  {
+    "yemek": "Lahmacun",
+    "porsiyon": "100g",
+    "kalori": 215.0,
+    "protein": 9.5,
+    "karbonhidrat": 28.0,
+    "yağ": 7.0,
+    "lif": 2.0
+  },
+  {
+    "yemek": "Mantı",
+    "porsiyon": "100g",
+    "kalori": 195.0,
+    "protein": 8.0,
+    "karbonhidrat": 26.0,
+    "yağ": 6.5,
+    "lif": 1.5
+  },
+  {
+    "yemek": "Menemen",
+    "porsiyon": "100g",
+    "kalori": 120.0,
+    "protein": 6.0,
+    "karbonhidrat": 5.0,
+    "yağ": 8.5,
+    "lif": 1.5
+  },
+  {
+    "yemek": "Mercimek Çorbası",
+    "porsiyon": "100g",
+    "kalori": 85.0,
+    "protein": 4.5,
+    "karbonhidrat": 13.0,
+    "yağ": 2.0,
+    "lif": 2.0
+  },
+  {
+    "yemek": "Mısır Ekmeği",
+    "porsiyon": "100g",
+    "kalori": 260.0,
+    "protein": 5.5,
+    "karbonhidrat": 50.0,
+    "yağ": 4.0,
+    "lif": 3.0
+  },
+  {
+    "yemek": "Nohut",
+    "porsiyon": "100g",
+    "kalori": 150.0,
+    "protein": 7.5,
+    "karbonhidrat": 20.0,
+    "yağ": 4.0,
+    "lif": 6.0
+  },
+  {
+    "yemek": "Pastane Poğaçası",
+    "porsiyon": "100g",
+    "kalori": 370.0,
+    "protein": 7.0,
+    "karbonhidrat": 45.0,
+    "yağ": 18.0,
+    "lif": 1.5
+  },
+  {
+    "yemek": "Patates Kızartması",
+    "porsiyon": "100g",
+    "kalori": 310.0,
+    "protein": 3.5,
+    "karbonhidrat": 40.0,
+    "yağ": 15.0,
+    "lif": 3.5
+  },
+  {
+    "yemek": "Pide",
+    "porsiyon": "100g",
+    "kalori": 260.0,
+    "protein": 9.0,
+    "karbonhidrat": 38.0,
+    "yağ": 8.0,
+    "lif": 2.0
+  },
+  {
+    "yemek": "Pirinç Pilavı",
+    "porsiyon": "100g",
+    "kalori": 170.0,
+    "protein": 2.5,
+    "karbonhidrat": 28.0,
+    "yağ": 5.0,
+    "lif": 0.5
+  },
+  {
+    "yemek": "Revani",
+    "porsiyon": "100g",
+    "kalori": 345.0,
+    "protein": 5.0,
+    "karbonhidrat": 54.0,
+    "yağ": 12.0,
+    "lif": 1.0
+  },
+  {
+    "yemek": "Sütlaç",
+    "porsiyon": "100g",
+    "kalori": 140.0,
+    "protein": 3.5,
+    "karbonhidrat": 24.0,
+    "yağ": 3.0,
+    "lif": 0.2
+  },
+  {
+    "yemek": "Tarhana Çorbası",
+    "porsiyon": "100g",
+    "kalori": 75.0,
+    "protein": 3.5,
+    "karbonhidrat": 11.0,
+    "yağ": 2.0,
+    "lif": 1.5
+  },
+  {
+    "yemek": "Tavuk",
+    "porsiyon": "100g",
+    "kalori": 155.0,
+    "protein": 24.0,
+    "karbonhidrat": 0.0,
+    "yağ": 6.0,
+    "lif": 0.0
+  },
+  {
+    "yemek": "Tavuk Döner",
+    "porsiyon": "100g",
+    "kalori": 200.0,
+    "protein": 19.0,
+    "karbonhidrat": 3.0,
+    "yağ": 12.0,
+    "lif": 0.5
+  },
+  {
+    "yemek": "Tulumba Tatlısı",
+    "porsiyon": "100g",
+    "kalori": 385.0,
+    "protein": 4.0,
+    "karbonhidrat": 58.0,
+    "yağ": 15.0,
+    "lif": 1.0
+  },
+  {
+    "yemek": "Yaprak Sarma",
+    "porsiyon": "100g",
+    "kalori": 140.0,
+    "protein": 3.0,
+    "karbonhidrat": 19.0,
+    "yağ": 5.5,
+    "lif": 2.5
+  },
+  {
+    "yemek": "Yulaf Ekmeği",
+    "porsiyon": "100g",
+    "kalori": 250.0,
+    "protein": 10.0,
+    "karbonhidrat": 44.0,
+    "yağ": 3.5,
+    "lif": 7.0
+  },
+  {
+    "yemek": "Çiğ Köfte",
+    "porsiyon": "100g",
+    "kalori": 190.0,
+    "protein": 6.0,
+    "karbonhidrat": 32.0,
+    "yağ": 4.0,
+    "lif": 4.5
+  },
+  {
+    "yemek": "İskender",
+    "porsiyon": "100g",
+    "kalori": 275.0,
+    "protein": 16.0,
+    "karbonhidrat": 12.0,
+    "yağ": 18.0,
+    "lif": 1.0
+  },
+  {
+    "yemek": "Şakşuka",
+    "porsiyon": "100g",
+    "kalori": 110.0,
+    "protein": 2.5,
+    "karbonhidrat": 9.0,
+    "yağ": 7.0,
+    "lif": 2.5
+  },
+  {
+    "yemek": "Şekerpare",
+    "porsiyon": "100g",
+    "kalori": 370.0,
+    "protein": 4.5,
+    "karbonhidrat": 56.0,
+    "yağ": 14.0,
+    "lif": 1.0
+  }
+]

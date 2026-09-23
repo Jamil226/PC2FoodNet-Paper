@@ -3,7 +3,7 @@ name = "pc2foodnet"
 version = "0.1.0"
 description = "Physics-Constrained, Confidence-Calibrated multi-task Turkish food model"
 channels = ["conda-forge", "pytorch", "nvidia"]
-platforms = ["linux-64"]
+platforms = ["linux-64", "osx-arm64", "osx-64"]
 
 [dependencies]
 python = "3.11.*"
@@ -32,8 +32,17 @@ einops = ">=0.7"
 # 4-fold stratified CV (primary workflow)
 train-cv = "python train.py --n_folds 4 --epochs 50 --batch_size 32 --output_dir runs/cv --results_dir results/cv"
 # CV warm-started from a prior full-dataset checkpoint
-train-cv-warmstart = "python train.py --n_folds 5 --epochs 30 --batch_size 32 --output_dir runs/cv_ws --results_dir results/cv_ws --warmstart_from runs/full/best.pt"
+train-cv-warmstart = "python train.py --n_folds 4 --epochs 30 --batch_size 32 --output_dir runs/cv_ws --results_dir results/cv_ws --warmstart_from runs/full/best.pt"
 # Dataset sanity check
 dataset-check = "python dataset.py turkish-food"
-# GPU check
+# Hardware sanity check
+gpu-check = "python -c \"import torch; print(f'PyTorch: {torch.__version__} | CUDA available: {torch.cuda.is_available()}')\""
+# Reviewer evaluation pipelines
+eval-density = "python density_priors.py"
+eval-baselines = "python baselines.py"
+eval-ablations = "python ablations.py"
+eval-conformal = "python conformal_calibration.py"
+check-duplicates = "python check_duplicates.py"
+generate-tables = "python generate_tables.py"
+
 

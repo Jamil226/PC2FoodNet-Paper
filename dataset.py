@@ -3,8 +3,8 @@ dataset.py — Turkish Food Dataset loader for PC2FoodNet.
 
 Supports three loading modes:
   1. build_full_dataloader()    — entire dataset for training (no holdout)
-  2. build_cv_fold()            — single 80:20 stratified fold
-  3. build_kfold_splits()       — all k stratified folds for k-fold CV
+  2. build_cv_fold()            — single stratified fold (75:25 default)
+  3. build_kfold_splits()       — all k stratified folds for k-fold CV (k=4 default)
   4. build_dataloaders()        — legacy train/val/test split (kept for compat)
 """
 
@@ -44,9 +44,21 @@ def build_nutrition_tensors(
       densities   (num_classes,)  g/mL  — approximate from macronutrient ratios
       kcal_per_g  (num_classes,)  kcal/g
 
-    Density approximation:
-      fat ~ 0.90 g/mL, protein + carb + fibre ~ 1.30 g/mL → macro-weighted mean
+    Constituent densities from Choi & Okos (1986) at 20°C (g/cm³ or g/mL):
+      Protein:       1.320 g/mL
+      Fat:           0.925 g/mL
+      Carbohydrate:  1.540 g/mL
+      Fiber:         1.310 g/mL
+
+    Additive-volume apparent macronutrient density:
+      V_macro = sum(m_j / rho_j)
+      density = sum(m_j) / (V_macro + eps)
     """
+    RHO_PROTEIN = 1.320
+    RHO_FAT     = 0.925
+    RHO_CARB    = 1.540
+    RHO_FIBER   = 1.310
+
     with open(json_path, "r", encoding="utf-8") as f:
         data = json.load(f)
 
@@ -69,11 +81,19 @@ def build_nutrition_tensors(
         yag          = _parse_float(rec.get("yağ",            5.0))
         lif          = _parse_float(rec.get("lif",            2.0))
 
+        # kcal per gram (kalori is per 100g standard portion)
         kpg = kalori / 100.0
         kcal_per_g.append(max(kpg, 0.1))
 
+        # Choi-Okos (1986) additive volume formulation
         total_macro = protein + karbonhidrat + yag + lif + 1e-8
-        density = (yag * 0.90 + (protein + karbonhidrat + lif) * 1.30) / total_macro
+        v_macro = (
+            (protein / RHO_PROTEIN) +
+            (karbonhidrat / RHO_CARB) +
+            (yag / RHO_FAT) +
+            (lif / RHO_FIBER)
+        )
+        density = total_macro / (v_macro + 1e-8)
         densities.append(float(density))
 
     return (
@@ -178,7 +198,7 @@ class TurkishFoodDataset(Dataset):
         if self.densities is not None and self.kcal_per_g is not None:
             density = float(self.densities[label])
             kcal_per_g = float(self.kcal_per_g[label])
-            gt_wgt = 200.0  # Canonical serving
+            gt_wgt = 100.0  # Canonical reference serving (100g)
             gt_vol = gt_wgt / max(density, 1e-3)
             gt_nrg = gt_wgt * kcal_per_g
 
@@ -215,7 +235,7 @@ class SubsetWithTransform(Dataset):
         if self.parent.densities is not None and self.parent.kcal_per_g is not None:
             density = float(self.parent.densities[label])
             kcal_per_g = float(self.parent.kcal_per_g[label])
-            gt_wgt = 200.0
+            gt_wgt = 100.0  # Canonical reference serving (100g)
             gt_vol = gt_wgt / max(density, 1e-3)
             gt_nrg = gt_wgt * kcal_per_g
 
@@ -262,23 +282,23 @@ def build_full_dataloader(
 
 
 # ---------------------------------------------------------------------------
-# Mode 2 — Single 80:20 stratified fold
+# Mode 2 — Single stratified fold (default 75:25)
 # ---------------------------------------------------------------------------
 
 def build_cv_fold(
     data_dir: str | Path,
     fold: int = 0,
-    n_folds: int = 5,
-    val_ratio: float = 0.20,
+    n_folds: int = 4,
+    val_ratio: float = 0.25,
     batch_size: int = 32,
     img_size: int = 224,
     num_workers: int = 8,
     seed: int = 42,
 ) -> tuple[DataLoader, DataLoader, list[str]]:
     """
-    80:20 stratified split (or k-fold if n_folds > 1 and fold index provided).
+    Stratified split (75:25 default, or k-fold if n_folds > 1 and fold index provided).
 
-    When n_folds=1, a simple stratified 80:20 train_test_split is used.
+    When n_folds=1, a simple stratified 75:25 train_test_split is used.
     When n_folds>1, StratifiedKFold is used and `fold` selects the fold.
 
     Returns: (train_loader, val_loader, class_names)
@@ -289,7 +309,7 @@ def build_cv_fold(
     indices = np.arange(len(base))
 
     if n_folds == 1:
-        # Simple 80:20 stratified split
+        # Simple stratified split (default 75:25)
         train_idx, val_idx = train_test_split(
             indices, test_size=val_ratio, stratify=labels, random_state=seed
         )
@@ -307,7 +327,7 @@ def build_cv_fold(
     train_loader = _make_loader(train_ds, batch_size, shuffle=True,  num_workers=num_workers)
     val_loader   = _make_loader(val_ds,   batch_size, shuffle=False, num_workers=num_workers)
 
-    fold_label = f"fold {fold+1}/{n_folds}" if n_folds > 1 else "80:20 split"
+    fold_label = f"fold {fold+1}/{n_folds}" if n_folds > 1 else f"{int((1-val_ratio)*100)}:{int(val_ratio*100)} split"
     print(f"[dataset] CV ({fold_label}): "
           f"train={len(train_ds):,} | val={len(val_ds):,} | classes={len(base.class_names)}")
 
@@ -320,7 +340,7 @@ def build_cv_fold(
 
 def build_kfold_splits(
     data_dir: str | Path,
-    n_folds: int = 5,
+    n_folds: int = 4,
     batch_size: int = 32,
     img_size: int = 224,
     num_workers: int = 8,
@@ -405,19 +425,35 @@ if __name__ == "__main__":
     data_dir = sys.argv[1] if len(sys.argv) > 1 else "turkish-food"
 
     print("\n=== Mode 1: Full dataset ===")
-    dl, classes = build_full_dataloader(data_dir, batch_size=8, num_workers=2)
-    imgs, lbs = next(iter(dl))
-    print(f"  batch: {imgs.shape}  labels: {lbs.tolist()}")
+    try:
+        dl, classes = build_full_dataloader(data_dir, batch_size=8, num_workers=2)
+        imgs, lbs = next(iter(dl))
+        print(f"  batch: {imgs.shape}  labels: {lbs.tolist()}")
+    except Exception as e:
+        print(f"  [Notice] Image data not found in '{data_dir}': {e}")
 
-    print("\n=== Mode 2: 80:20 single fold ===")
-    tr, vl, _ = build_cv_fold(data_dir, n_folds=1, batch_size=8, num_workers=2)
-    print(f"  train batches: {len(tr)} | val batches: {len(vl)}")
+    print("\n=== Mode 2: 75:25 single fold ===")
+    try:
+        tr, vl, _ = build_cv_fold(data_dir, n_folds=1, val_ratio=0.25, batch_size=8, num_workers=2)
+        print(f"  train batches: {len(tr)} | val batches: {len(vl)}")
+    except Exception as e:
+        print(f"  [Notice] Image data not found in '{data_dir}': {e}")
 
-    print("\n=== Mode 3: 5-fold CV ===")
-    folds, _ = build_kfold_splits(data_dir, n_folds=5, batch_size=8, num_workers=2)
-    print(f"  folds built: {len(folds)}")
+    print("\n=== Mode 3: 4-fold CV ===")
+    try:
+        folds, _ = build_kfold_splits(data_dir, n_folds=4, batch_size=8, num_workers=2)
+        print(f"  folds built: {len(folds)}")
+    except Exception as e:
+        print(f"  [Notice] Image data not found in '{data_dir}': {e}")
 
     json_path = Path(data_dir) / "porsiyon_nutrition_data.json"
-    densities, kcal_per_g = build_nutrition_tensors(json_path, classes)
-    print(f"\nDensities  min={densities.min():.3f} max={densities.max():.3f}")
-    print(f"kcal_per_g min={kcal_per_g.min():.3f} max={kcal_per_g.max():.3f}")
+    if json_path.exists():
+        with open(json_path, "r", encoding="utf-8") as f:
+            sample_classes = [r["yemek"] for r in json.load(f)]
+        densities, kcal_per_g = build_nutrition_tensors(json_path, sample_classes)
+        print(f"\n[✓] Loaded nutrition priors for {len(sample_classes)} classes from {json_path}")
+        print(f"  Densities (g/mL): min={densities.min():.3f} max={densities.max():.3f} mean={densities.mean():.3f}")
+        print(f"  kcal_per_g:       min={kcal_per_g.min():.3f} max={kcal_per_g.max():.3f} mean={kcal_per_g.mean():.3f}")
+    else:
+        print(f"\n[Notice] '{json_path}' not found.")
+
