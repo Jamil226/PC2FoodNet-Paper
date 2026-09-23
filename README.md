@@ -8,13 +8,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![MDPI Nutrients](https://img.shields.io/badge/MDPI-Nutrients-orange.svg)](https://www.mdpi.com/journal/nutrients)
 
-Official repository accompanying the research manuscript:  
-**"AI-Assisted Nutrition Estimation and Exercise Support for Integrated Lifestyle Management in Patients with Diabetes"**  
-Submitted to *MDPI Nutrients* (2026).
 
-> [!NOTE]
-> **Round 2 Manuscript & Code Synchronization**:
-> All ten reviewer criticisms from Round 2 review have been addressed in both the revised manuscript ([`paper-revised.tex`](../paper-revised.tex)) and this codebase. For an itemized, point-by-point mapping of code modifications to each reviewer comment, please see [`changes.md`](changes.md) and [`response_to_reviewers.md`](../response_to_reviewers.md).
 
 ---
 
